@@ -62,6 +62,8 @@ VLLM_URL=http://vllm:8000     # vLLM server URL
 VLLM_MODEL=codellama/CodeLlama-7b-Instruct-hf
 
 # Optional
+THEMIS_URL=http://themisdb:8765
+THEMIS_AUTH_TOKEN=
 LOG_LEVEL=INFO
 CACHE_BACKEND=redis
 REDIS_HOST=redis
@@ -74,7 +76,7 @@ REDIS_PORT=6379
 |-------|----------|--------------|
 | ChromaDB | Small deployments (<100K docs) | No external deps |
 | Qdrant | Medium deployments | Qdrant server |
-| ThemisDB | Large with graph queries | ThemisDB server |
+| ThemisDB | Large with graph queries | `makr-code/themisdb` server |
 
 ## Monitoring
 

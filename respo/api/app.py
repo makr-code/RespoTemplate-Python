@@ -49,6 +49,29 @@ logging.basicConfig(
 logger = structlog.get_logger(__name__)
 
 
+def _vector_store_kwargs() -> dict:
+    """Build backend-specific vector store init kwargs."""
+    backend = settings.vector_store.backend.lower()
+
+    if backend == "chroma":
+        return {"persist_directory": settings.vector_store.chroma_persist_dir}
+    if backend == "qdrant":
+        return {"url": settings.vector_store.qdrant_url}
+    if backend == "weaviate":
+        return {"url": settings.vector_store.weaviate_url}
+    if backend == "themis":
+        from respo.vectorstore.themis import ThemisConfig
+
+        return {
+            "config": ThemisConfig(
+                url=settings.vector_store.themis_url,
+                auth_token=settings.themis.auth_token,
+            )
+        }
+
+    return {}
+
+
 # Global instances
 _vector_store = None
 _embedder = None
@@ -69,7 +92,7 @@ async def initialize_components() -> None:
     try:
         _vector_store = VectorStoreFactory.create(
             settings.vector_store.backend,
-            persist_directory=settings.vector_store.chroma_persist_dir,
+            **_vector_store_kwargs(),
         )
         endpoints._vector_store = _vector_store
     except Exception as e:

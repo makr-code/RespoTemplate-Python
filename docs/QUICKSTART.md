@@ -61,6 +61,9 @@ Create a `.env` file:
 ```bash
 # Vector Store
 VECTOR_STORE=chroma  # or: qdrant, themis
+# For ThemisDB: https://github.com/makr-code/themisdb
+THEMIS_URL=http://localhost:8765
+THEMIS_AUTH_TOKEN=
 
 # vLLM
 VLLM_URL=http://localhost:8000

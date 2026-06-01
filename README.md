@@ -164,7 +164,9 @@ VECTOR_STORE=chroma                    # chroma, qdrant, weaviate, themis
 CHROMA_PERSIST_DIR=./data/chroma
 # QDRANT_URL=http://localhost:6333
 # WEAVIATE_URL=http://localhost:8080
+# Für ThemisDB aus https://github.com/makr-code/themisdb
 # THEMIS_URL=http://localhost:8765
+# THEMIS_AUTH_TOKEN=
 
 # vLLM
 VLLM_URL=http://localhost:8000
@@ -217,6 +219,8 @@ RESPO unterstützt verschiedene Vector Store Backends:
 ## 🔗 ThemisDB Integration
 
 Bei Verwendung von ThemisDB als Backend werden zusätzliche Features freigeschaltet:
+
+Referenz-Implementierung: **https://github.com/makr-code/themisdb**
 
 ### Graph-basierte Code-Analyse
 
