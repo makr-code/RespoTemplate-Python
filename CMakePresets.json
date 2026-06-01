@@ -1,0 +1,74 @@
+{
+  "version": 5,
+  "cmakeMinimumRequired": {
+    "major": 3,
+    "minor": 21,
+    "patch": 0
+  },
+  "configurePresets": [
+    {
+      "name": "debug",
+      "displayName": "Debug",
+      "description": "Debug build with compile_commands",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/Debug",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "release",
+      "displayName": "Release",
+      "description": "Optimized release build",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/Release",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Release",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    },
+    {
+      "name": "asan",
+      "displayName": "ASan",
+      "description": "AddressSanitizer build",
+      "generator": "Ninja",
+      "binaryDir": "${sourceDir}/build/ASan",
+      "cacheVariables": {
+        "CMAKE_BUILD_TYPE": "Debug",
+        "ENABLE_ASAN": "ON",
+        "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
+      }
+    }
+  ],
+  "buildPresets": [
+    {
+      "name": "build-debug",
+      "configurePreset": "debug"
+    },
+    {
+      "name": "build-release",
+      "configurePreset": "release"
+    },
+    {
+      "name": "build-asan",
+      "configurePreset": "asan"
+    }
+  ],
+  "testPresets": [
+    {
+      "name": "test-debug",
+      "configurePreset": "debug",
+      "output": {
+        "outputOnFailure": true
+      }
+    },
+    {
+      "name": "test-asan",
+      "configurePreset": "asan",
+      "output": {
+        "outputOnFailure": true
+      }
+    }
+  ]
+}
