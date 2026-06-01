@@ -10,7 +10,6 @@ Leverages ThemisDB's unique capabilities:
 
 from dataclasses import dataclass, field
 from typing import Any, Optional
-from urllib.parse import urljoin
 
 import httpx
 import structlog
@@ -27,6 +26,7 @@ class ThemisConfig:
     url: str = "http://localhost:8765"
     collection: str = "respo_code"
     timeout: float = 30.0
+    auth_token: Optional[str] = None
     
     # Vector index settings
     vector_dimension: int = 768
@@ -75,7 +75,13 @@ class ThemisVectorStore(VectorStoreBase):
     - Traversal queries for dependency analysis
     """
     
-    def __init__(self, config: Optional[ThemisConfig] = None) -> None:
+    def __init__(
+        self,
+        config: Optional[ThemisConfig] = None,
+        url: Optional[str] = None,
+        auth_token: Optional[str] = None,
+        **_: Any,
+    ) -> None:
         """
         Initialize ThemisDB connection.
         
@@ -83,15 +89,23 @@ class ThemisVectorStore(VectorStoreBase):
             config: ThemisDB configuration
         """
         self.config = config or ThemisConfig()
+        if url:
+            self.config.url = url
+        if auth_token:
+            self.config.auth_token = auth_token
         self._client: Optional[httpx.AsyncClient] = None
         self._initialized = False
     
     async def _ensure_client(self) -> httpx.AsyncClient:
         """Get or create HTTP client."""
         if self._client is None:
+            headers = {}
+            if self.config.auth_token:
+                headers["Authorization"] = "Bearer " + self.config.auth_token
             self._client = httpx.AsyncClient(
                 base_url=self.config.url,
                 timeout=self.config.timeout,
+                headers=headers or None,
             )
         return self._client
     

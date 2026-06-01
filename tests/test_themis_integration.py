@@ -408,6 +408,35 @@ class TestThemisVectorStore:
             assert len(nodes) == 2
             assert nodes[0]["id"] == "callee1"
 
+    @pytest.mark.asyncio
+    async def test_constructor_accepts_factory_kwargs(self) -> None:
+        """Test constructor supports kwargs passed by generic factory callers."""
+        from respo.vectorstore.themis import ThemisVectorStore
+
+        store = ThemisVectorStore(
+            url="http://localhost:9876",
+            auth_token="secret-token",
+            persist_directory="/tmp/ignored",
+        )
+
+        assert store.config.url == "http://localhost:9876"
+        assert store.config.auth_token == "secret-token"
+
+    @pytest.mark.asyncio
+    async def test_client_uses_auth_header(self) -> None:
+        """Test auth token is forwarded as bearer auth header."""
+        from respo.vectorstore.themis import ThemisVectorStore, ThemisConfig
+
+        with patch("httpx.AsyncClient") as mock_client_class:
+            mock_client = AsyncMock()
+            mock_client_class.return_value = mock_client
+
+            store = ThemisVectorStore(ThemisConfig(auth_token="abc123"))
+            await store._ensure_client()
+
+            _, kwargs = mock_client_class.call_args
+            assert kwargs["headers"]["Authorization"].startswith("Bearer ")
+
 
 # =============================================================================
 # Ingestion Pipeline with Graph Tests

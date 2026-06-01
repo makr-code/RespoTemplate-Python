@@ -528,10 +528,26 @@ def create_search_tab():
             from respo.embedding import CodeEmbedder
             
             settings = get_settings()
-            
+
+            backend = settings.vector_store.backend.lower()
+            vector_store_kwargs = {}
+            if backend == "chroma":
+                vector_store_kwargs["persist_directory"] = settings.vector_store.chroma_persist_dir
+            elif backend == "qdrant":
+                vector_store_kwargs["url"] = settings.vector_store.qdrant_url
+            elif backend == "weaviate":
+                vector_store_kwargs["url"] = settings.vector_store.weaviate_url
+            elif backend == "themis":
+                from respo.vectorstore.themis import ThemisConfig
+
+                vector_store_kwargs["config"] = ThemisConfig(
+                    url=settings.vector_store.themis_url,
+                    auth_token=settings.themis.auth_token,
+                )
+
             vector_store = VectorStoreFactory.create(
                 settings.vector_store.backend,
-                persist_directory=settings.vector_store.chroma_persist_dir,
+                **vector_store_kwargs,
             )
             
             embedder = CodeEmbedder(
