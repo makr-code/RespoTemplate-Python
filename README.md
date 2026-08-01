@@ -294,6 +294,8 @@ Dieses Repository ist als **AI Vibe Coding Template** für Python eingerichtet. 
 ### Verzeichnisstruktur für KI-Agenten
 
 ```
+AGENTS.md                          # LLM Agent Schema (Wiki-Konventionen + Workflows)
+
 .github/
 ├── copilot-instructions.md        # Copilot: Python-Kodierstandards + Toolchain
 ├── instructions/
@@ -304,7 +306,14 @@ Dieses Repository ist als **AI Vibe Coding Template** für Python eingerichtet. 
     ├── codeql-python.yml          # CodeQL Security Scan (Python)
     └── label-ai-generated.yml     # Labeling von KI-generierten PRs
 
-ai_context/                        # Langlebiger Kontext für KI-Agenten
+raw/                               # Unveränderliche Quell-Dokumente (LLM liest, Mensch schreibt)
+
+wiki/                              # LLM-gepflegte persistente Wissensbasis
+├── index.md                       # Inhaltsverzeichnis aller Wiki-Seiten
+├── log.md                         # Append-only Operationslog
+└── sources/                       # Eine Summary-Seite pro Quell-Dokument
+
+ai_context/                        # Architektonischer Langzeit-Kontext (Mensch + LLM)
 ├── adr/                           # Architecture Decision Records
 │   └── 001-python-async-strategy.md
 ├── api-specs/                     # OpenAPI-Spezifikationen (FastAPI)
@@ -318,13 +327,37 @@ ai_working/                        # Temporäre Agenten-Artefakte (nicht committ
 └── notes/                         # Kurzzeit-Entscheidungsnotizen
 ```
 
-### ai_context/ vs. ai_working/
+### LLM Wiki (Karpathy-Pattern)
 
-| | `ai_context/` | `ai_working/` |
-|---|---|---|
-| **Lebensdauer** | Dauerhaft, versioniert | Temporär, .gitignore |
-| **Inhalt** | ADRs, API-Specs, Richtlinien | Pläne, Debug-Infos, Notizen |
-| **Zweck** | Langzeit-Kontext für alle Agenten | Arbeitsartefakte eines laufenden Tasks |
+Das Repository folgt dem [LLM Wiki-Pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f): statt RAG-Retrieval aus Roh-Dokumenten bei jeder Anfrage baut und pflegt der LLM-Agent eine **persistente, wachsende Wissensbasis**.
+
+| Schicht | Verzeichnis | Autor | Beschreibung |
+|---------|-------------|-------|--------------|
+| Raw Sources | `raw/` | Mensch | Unveränderliche Quell-Dokumente |
+| Wiki | `wiki/` | LLM | Persistente, verlinkte Markdown-Seiten |
+| Schema | `AGENTS.md` | Mensch + LLM | Konventionen und Workflows für den Agenten |
+
+**Grundprinzip:** Der Mensch kuratiert Quellen und stellt Fragen. Der LLM liest, fasst zusammen, pflegt Cross-References, aktualisiert das Wiki — und das Wissen akkumuliert sich statt bei jeder Anfrage neu abgeleitet zu werden.
+
+**Workflow:**
+```bash
+# Neue Quelle einpflegen
+# → "Ingest raw/articles/mein-artikel.md"
+
+# Wissensbasis abfragen
+# → "Wie funktioniert das Reranking im RAG-Pipeline?"
+
+# Wiki aufräumen
+# → "Lint the wiki — check for contradictions and orphan pages"
+```
+
+### ai_context/ vs. wiki/ vs. ai_working/
+
+| | `ai_context/` | `wiki/` | `ai_working/` |
+|---|---|---|---|
+| **Lebensdauer** | Dauerhaft | Dauerhaft, wachsend | Temporär (.gitignore) |
+| **Autor** | Mensch + LLM | LLM (Mensch liest) | LLM |
+| **Inhalt** | ADRs, API-Specs, Richtlinien | Domain-Wissen, Source-Summaries | Pläne, Debug-Traces, Notizen |
 
 ### ADR-Prozess
 
@@ -346,6 +379,8 @@ KI-generierte PRs werden automatisch mit dem Label `ai-generated` versehen.
 
 
 
+## 🛠️ Development
+
 ```bash
 # Tests ausführen
 pytest tests/
@@ -357,7 +392,7 @@ ruff check respo/
 mypy respo/
 
 # Formatierung
-black respo/
+ruff format respo/
 ```
 
 ## 📄 Lizenz

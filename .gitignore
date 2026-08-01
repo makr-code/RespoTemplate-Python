@@ -37,3 +37,13 @@ coverage.xml
 ai_working/plans/*.md
 ai_working/debug/*.md
 ai_working/notes/*.md
+
+# Raw sources — große Binär- und Mediendateien nicht committen (Text-Quellen sind OK)
+raw/**/*.pdf
+raw/**/*.epub
+raw/assets/*.png
+raw/assets/*.jpg
+raw/assets/*.jpeg
+raw/assets/*.gif
+raw/assets/*.mp3
+raw/assets/*.mp4
