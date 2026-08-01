@@ -15,6 +15,8 @@
 
 - Pull-Request Cycle Time
 - Deployment-Frequenz
-- Anzahl der ASan-Funde
-- Anzahl der CodeQL-Funde
-- Anteil automatisiert validierter KI-Beiträge
+- Test Coverage (Ziel: ≥ 80 %)
+- Anzahl der `mypy`-Errors im Haupt-Branch
+- Anzahl der `ruff`-Findings (Linting-Schulden)
+- Anzahl der CodeQL-Funde (Python, High/Critical)
+- Anteil automatisiert validierter KI-Beiträge (grüne CI + Label `ai-generated`)
