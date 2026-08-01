@@ -3,6 +3,8 @@
 [![Status](https://img.shields.io/badge/status-development-yellow)](.)
 [![Python](https://img.shields.io/badge/python-3.10+-blue)](.)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![python-quality](https://github.com/makr-code/RespoTemplate-Python/actions/workflows/python-quality.yml/badge.svg)](https://github.com/makr-code/RespoTemplate-Python/actions/workflows/python-quality.yml)
+[![CodeQL](https://github.com/makr-code/RespoTemplate-Python/actions/workflows/codeql-python.yml/badge.svg)](https://github.com/makr-code/RespoTemplate-Python/actions/workflows/codeql-python.yml)
 
 ## 🎯 Übersicht
 
@@ -285,6 +287,98 @@ callees = await store.graph_traverse(
 | `contains` | Modul/Klasse enthält Funktion |
 | `defines` | Klasse definiert Methode |
 
+## 🤖 AI Vibe Coding Setup
+
+Dieses Repository ist als **AI Vibe Coding Template** für Python eingerichtet. Alle KI-Agenten-Konventionen, Copilot-Richtlinien und CI-Anforderungen sind vollständig dokumentiert.
+
+### Verzeichnisstruktur für KI-Agenten
+
+```
+AGENTS.md                          # LLM Agent Schema (Wiki-Konventionen + Workflows)
+
+.github/
+├── copilot-instructions.md        # Copilot: Python-Kodierstandards + Toolchain
+├── instructions/
+│   ├── python-tools.instructions.md   # Python Language Server, ruff, mypy
+│   └── ci-logic.instructions.md       # CI-Pflichtprüfungen für PRs
+└── workflows/
+    ├── python-quality.yml         # lint (ruff) + typecheck (mypy) + tests (pytest)
+    ├── codeql-python.yml          # CodeQL Security Scan (Python)
+    └── label-ai-generated.yml     # Labeling von KI-generierten PRs
+
+raw/                               # Unveränderliche Quell-Dokumente (LLM liest, Mensch schreibt)
+
+wiki/                              # LLM-gepflegte persistente Wissensbasis
+├── index.md                       # Inhaltsverzeichnis aller Wiki-Seiten
+├── log.md                         # Append-only Operationslog
+└── sources/                       # Eine Summary-Seite pro Quell-Dokument
+
+ai_context/                        # Architektonischer Langzeit-Kontext (Mensch + LLM)
+├── adr/                           # Architecture Decision Records
+│   └── 001-python-async-strategy.md
+├── api-specs/                     # OpenAPI-Spezifikationen (FastAPI)
+├── memory-management-policy.md   # Python Ressourcen-Management (Context Manager)
+├── prompt-engineering-guidelines.md  # Prompting-Tipps für Python
+└── governance-and-metrics.md     # Governance + KPIs
+
+ai_working/                        # Temporäre Agenten-Artefakte (nicht committen)
+├── plans/                         # Arbeitspläne, Checklisten
+├── debug/                         # Stack Traces, Reproduktions-Skripte
+└── notes/                         # Kurzzeit-Entscheidungsnotizen
+```
+
+### LLM Wiki (Karpathy-Pattern)
+
+Das Repository folgt dem [LLM Wiki-Pattern](https://gist.github.com/karpathy/442a6bf555914893e9891c11519de94f): statt RAG-Retrieval aus Roh-Dokumenten bei jeder Anfrage baut und pflegt der LLM-Agent eine **persistente, wachsende Wissensbasis**.
+
+| Schicht | Verzeichnis | Autor | Beschreibung |
+|---------|-------------|-------|--------------|
+| Raw Sources | `raw/` | Mensch | Unveränderliche Quell-Dokumente |
+| Wiki | `wiki/` | LLM | Persistente, verlinkte Markdown-Seiten |
+| Schema | `AGENTS.md` | Mensch + LLM | Konventionen und Workflows für den Agenten |
+
+**Grundprinzip:** Der Mensch kuratiert Quellen und stellt Fragen. Der LLM liest, fasst zusammen, pflegt Cross-References, aktualisiert das Wiki — und das Wissen akkumuliert sich statt bei jeder Anfrage neu abgeleitet zu werden.
+
+**Workflow:**
+```bash
+# Neue Quelle einpflegen
+# → "Ingest raw/articles/mein-artikel.md"
+
+# Wissensbasis abfragen
+# → "Wie funktioniert das Reranking im RAG-Pipeline?"
+
+# Wiki aufräumen
+# → "Lint the wiki — check for contradictions and orphan pages"
+```
+
+### ai_context/ vs. wiki/ vs. ai_working/
+
+| | `ai_context/` | `wiki/` | `ai_working/` |
+|---|---|---|---|
+| **Lebensdauer** | Dauerhaft | Dauerhaft, wachsend | Temporär (.gitignore) |
+| **Autor** | Mensch + LLM | LLM (Mensch liest) | LLM |
+| **Inhalt** | ADRs, API-Specs, Richtlinien | Domain-Wissen, Source-Summaries | Pläne, Debug-Traces, Notizen |
+
+### ADR-Prozess
+
+Architekturentscheidungen werden als ADR in `ai_context/adr/` dokumentiert. Siehe [`ai_context/adr/README.md`](ai_context/adr/README.md) für das Template und die Übersicht.
+
+### CI-Anforderungen für PRs
+
+Jeder PR muss folgende Checks bestehen:
+
+1. **`ruff check`** — keine Linting-Findings
+2. **`ruff format --check`** — korrekte Formatierung
+3. **`mypy`** — keine neuen Type Errors
+4. **`pytest --cov`** — alle Tests grün, Coverage ≥ 80 %
+5. **CodeQL** — keine High/Critical Security Findings
+
+KI-generierte PRs werden automatisch mit dem Label `ai-generated` versehen.
+
+---
+
+
+
 ## 🛠️ Development
 
 ```bash
@@ -298,7 +392,7 @@ ruff check respo/
 mypy respo/
 
 # Formatierung
-black respo/
+ruff format respo/
 ```
 
 ## 📄 Lizenz

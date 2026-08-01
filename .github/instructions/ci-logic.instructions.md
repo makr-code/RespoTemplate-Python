@@ -1,11 +1,12 @@
 # CI Logic Instructions
 
-## Pflichtprüfungen für C++-Änderungen
+## Pflichtprüfungen für Python-Änderungen
 
-- `clang-format` muss sauber laufen
-- `clang-tidy` darf keine neuen kritischen Findings erzeugen
-- CodeQL muss ohne offene High/Critical Findings durchlaufen
-- Sanitizer-Build (ASan) muss grün sein
+- `ruff check` muss sauber laufen (keine neuen Findings)
+- `ruff format --check` muss sauber laufen (Code korrekt formatiert)
+- `mypy` darf keine neuen Errors einführen
+- `pytest --cov` muss grün sein; Coverage ≥ 80 %
+- CodeQL (Python) muss ohne offene High/Critical Findings durchlaufen
 
 ## PR-Verhalten
 

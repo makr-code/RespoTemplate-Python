@@ -1,34 +1,45 @@
-# Copilot Instructions (C++)
+# Copilot Instructions (Python)
 
 ## Sprache & Analyse
 
-- Verwende bei Symbolsuche und Referenzanalyse zuerst C++-Sprachwerkzeuge, nicht reine Textsuche.
-- Berücksichtige aktive CMake-Presets und Build-Konfigurationen.
+- Verwende bei Symbolsuche und Referenzanalyse zuerst Python-Sprachwerkzeuge (Pylance/Pyright), nicht reine Textsuche.
+- Berücksichtige aktive `pyproject.toml`-Konfiguration (ruff, mypy, pytest).
 
-## Modern C++ (C++20/23)
+## Modern Python (3.10+)
 
-- Ownership explizit modellieren: `std::unique_ptr` und `std::shared_ptr`.
-- Nicht-ownende Eingaben bevorzugt über `std::string_view` und `std::span`.
-- Templates mit Concepts einschränken.
-- Datenpipelines bevorzugt mit Ranges implementieren.
-- Coroutinen nur mit klaren Promise-Typen und nachvollziehbarer Fehlerbehandlung.
+- **Typing** ist verpflichtend: Alle öffentlichen Funktionen und Methoden erhalten vollständige Type Hints.
+  - Verwende `type | None` (Union-Syntax ab 3.10) statt `Optional[type]`.
+  - Nutze `TypeVar`, `Generic` und `Protocol` für generische APIs.
+  - Nutze `TypedDict` und `dataclass` für strukturierte Daten; bevorzuge `pydantic.BaseModel` an API-Grenzen.
+- **Async/Await**: Alle I/O-Operationen (HTTP, DB, Dateisystem) asynchron implementieren.
+  - Exception-Handling explizit: kein nacktes `except Exception`.
+  - Timeouts immer setzen (`asyncio.wait_for` oder `httpx`-Timeout).
+- **Ressourcen**: Context Manager (`with`/`async with`) für alle I/O-Ressourcen.
+- **Validierung**: `pydantic.BaseModel` für alle externen Eingaben (API, Config, Umgebungsvariablen).
+- **Konfiguration**: `pydantic-settings` mit `.env`-Fallback, keine `os.environ.get` im Applikationscode.
+
+## Toolchain
+
+- **Linting/Formatting**: `ruff check` + `ruff format` (kein separates `flake8`/`isort`).
+- **Type Checking**: `mypy --strict` (neue Dateien), mindestens `mypy` ohne `--ignore-missing-imports` für Kernmodule.
+- **Testing**: `pytest` + `pytest-asyncio` (asyncio_mode = "auto"), Coverage ≥ 80 %.
+- **Keine `print()`** im Produktionscode — stattdessen `structlog` oder `logging`.
 
 ## Architekturprinzipien
 
-- RAII ist obligatorisch.
-- Vermeide unnötige Abstraktionen und implizite Ownership.
-- Schreibe Code, der testbar und sanitizierbar bleibt.
+- Dependency Injection statt globaler Singletons.
+- Vermeide unnötige Abstraktionen: YAGNI vor Over-Engineering.
+- Schreibe Code, der testbar und mockbar bleibt (Interfaces über `Protocol`, kein direktes `import` von Infrastruktur in Domänenlogik).
 
-## Beispiele
+## Bevorzugt
 
-### Bevorzugt
+- Kleine, fokussierte Funktionen mit klaren Ein- und Ausgaben.
+- `dataclass` oder `pydantic.BaseModel` statt roher `dict`-Rückgaben.
+- Fehlerbehandlung mit spezifischen Exception-Typen (eigene Exceptions von `Exception` ableiten).
 
-- Ressourcen in RAII-Objekten kapseln.
-- APIs mit klarer Ownership und Lebensdauer dokumentieren.
-- Build- und Test-Targets in CMake explizit definieren.
+## Vermeiden
 
-### Vermeiden
-
-- Rohe Zeiger als primärer Ownership-Mechanismus.
-- Versteckte globale Zustände.
+- Mutable Default-Argumente (`def f(x=[]):`).
+- Versteckte globale Zustände und Singleton-Imports mit Seiteneffekten.
+- `Any`-Typen ohne Kommentar-Begründung.
 - Komplexität ohne klaren Wartungsnutzen.
