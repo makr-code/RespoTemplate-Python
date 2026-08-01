@@ -3,6 +3,8 @@
 [![Status](https://img.shields.io/badge/status-development-yellow)](.)
 [![Python](https://img.shields.io/badge/python-3.10+-blue)](.)
 [![License](https://img.shields.io/badge/license-MIT-green)](LICENSE)
+[![python-quality](https://github.com/makr-code/RespoTemplate-Python/actions/workflows/python-quality.yml/badge.svg)](https://github.com/makr-code/RespoTemplate-Python/actions/workflows/python-quality.yml)
+[![CodeQL](https://github.com/makr-code/RespoTemplate-Python/actions/workflows/codeql-python.yml/badge.svg)](https://github.com/makr-code/RespoTemplate-Python/actions/workflows/codeql-python.yml)
 
 ## 🎯 Übersicht
 
@@ -285,7 +287,64 @@ callees = await store.graph_traverse(
 | `contains` | Modul/Klasse enthält Funktion |
 | `defines` | Klasse definiert Methode |
 
-## 🛠️ Development
+## 🤖 AI Vibe Coding Setup
+
+Dieses Repository ist als **AI Vibe Coding Template** für Python eingerichtet. Alle KI-Agenten-Konventionen, Copilot-Richtlinien und CI-Anforderungen sind vollständig dokumentiert.
+
+### Verzeichnisstruktur für KI-Agenten
+
+```
+.github/
+├── copilot-instructions.md        # Copilot: Python-Kodierstandards + Toolchain
+├── instructions/
+│   ├── python-tools.instructions.md   # Python Language Server, ruff, mypy
+│   └── ci-logic.instructions.md       # CI-Pflichtprüfungen für PRs
+└── workflows/
+    ├── python-quality.yml         # lint (ruff) + typecheck (mypy) + tests (pytest)
+    ├── codeql-python.yml          # CodeQL Security Scan (Python)
+    └── label-ai-generated.yml     # Labeling von KI-generierten PRs
+
+ai_context/                        # Langlebiger Kontext für KI-Agenten
+├── adr/                           # Architecture Decision Records
+│   └── 001-python-async-strategy.md
+├── api-specs/                     # OpenAPI-Spezifikationen (FastAPI)
+├── memory-management-policy.md   # Python Ressourcen-Management (Context Manager)
+├── prompt-engineering-guidelines.md  # Prompting-Tipps für Python
+└── governance-and-metrics.md     # Governance + KPIs
+
+ai_working/                        # Temporäre Agenten-Artefakte (nicht committen)
+├── plans/                         # Arbeitspläne, Checklisten
+├── debug/                         # Stack Traces, Reproduktions-Skripte
+└── notes/                         # Kurzzeit-Entscheidungsnotizen
+```
+
+### ai_context/ vs. ai_working/
+
+| | `ai_context/` | `ai_working/` |
+|---|---|---|
+| **Lebensdauer** | Dauerhaft, versioniert | Temporär, .gitignore |
+| **Inhalt** | ADRs, API-Specs, Richtlinien | Pläne, Debug-Infos, Notizen |
+| **Zweck** | Langzeit-Kontext für alle Agenten | Arbeitsartefakte eines laufenden Tasks |
+
+### ADR-Prozess
+
+Architekturentscheidungen werden als ADR in `ai_context/adr/` dokumentiert. Siehe [`ai_context/adr/README.md`](ai_context/adr/README.md) für das Template und die Übersicht.
+
+### CI-Anforderungen für PRs
+
+Jeder PR muss folgende Checks bestehen:
+
+1. **`ruff check`** — keine Linting-Findings
+2. **`ruff format --check`** — korrekte Formatierung
+3. **`mypy`** — keine neuen Type Errors
+4. **`pytest --cov`** — alle Tests grün, Coverage ≥ 80 %
+5. **CodeQL** — keine High/Critical Security Findings
+
+KI-generierte PRs werden automatisch mit dem Label `ai-generated` versehen.
+
+---
+
+
 
 ```bash
 # Tests ausführen
