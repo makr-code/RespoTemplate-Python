@@ -7,7 +7,7 @@ It mirrors the conventions defined in `AGENTS.md` and `.github/copilot-instructi
 
 ## Project Overview
 
-Python 3.10+ project using FastAPI, asyncio, Pydantic, and a pluggable vector store architecture.
+Python 3.10+ workspace template for AI-supported development with Copilot agents and standardized quality gates.
 
 ```
 AGENTS.md           ← LLM agent schema (read this too)
@@ -17,7 +17,7 @@ wiki/               ← LLM-maintained knowledge base
 raw/                ← immutable source documents (never modify)
 ai_context/         ← ADRs, API specs, governance policies
 ai_working/         ← short-lived working artifacts (not committed)
-respo/              ← Python package source code
+src/workspace_template/ ← Python package source code
 tests/              ← pytest test suite
 ```
 
