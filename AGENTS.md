@@ -9,7 +9,7 @@ Read this file at the start of every session. Keep it up to date as conventions 
 
 ## Project Overview
 
-This is a Python 3.10+ project using FastAPI, asyncio, Pydantic, and a pluggable vector store architecture. The primary toolchain is `ruff` (lint + format), `mypy` (type checking), and `pytest` (testing, coverage ≥ 80 %).
+This is a Python 3.10+ workspace template for AI-supported development with Copilot agents, reusable project conventions, and the `ruff`/`mypy`/`pytest` toolchain.
 
 Key directories:
 
@@ -21,7 +21,7 @@ wiki/               ← LLM-maintained persistent knowledge base
 raw/                ← immutable source documents (never modify)
 ai_context/         ← long-lived architectural context (ADRs, API specs, guidelines)
 ai_working/         ← short-lived working artifacts (plans, debug, notes — not committed)
-respo/              ← Python package source code
+src/workspace_template/ ← Python package source code
 tests/              ← pytest test suite
 ```
 
